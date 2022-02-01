@@ -1,21 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:todoey/models/task.dart';
+import 'package:provider/provider.dart';
+import 'package:todoey/models/task_data.dart';
 import 'package:todoey/widgets/tasks_list.dart';
 
 import 'add_task_screen.dart';
 
-class TasksScreen extends StatefulWidget {
-  @override
-  State<TasksScreen> createState() => _TasksScreenState();
-}
-
-class _TasksScreenState extends State<TasksScreen> {
-  List<Task> tasks = [
-    Task(name: 'Buy milk'),
-    Task(name: 'Buy eggs'),
-    Task(name: 'Buy bread'),
-  ];
-
+class TasksScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,12 +25,7 @@ class _TasksScreenState extends State<TasksScreen> {
                 // To have the AddTaskScreen sit just above the keyboard,
                 // you can wrap it inside a SingleChildScrollView, which
                 // determines the padding at the bottom using a MediaQuery.
-                child: AddTaskScreen(addTaskCallback: (newTaskTitle) {
-                  setState(() {
-                    tasks.add(Task(name: newTaskTitle));
-                  });
-                  Navigator.pop(context);
-                }),
+                child: AddTaskScreen(),
               ),
             ),
             // For certain screen sizes, this may mean the Add button is
@@ -48,6 +33,7 @@ class _TasksScreenState extends State<TasksScreen> {
             // you can make the modal take up the full screen:
             isScrollControlled: true,
           );
+          // Navigator.pop(context);
         },
       ),
       body: SafeArea(
@@ -80,13 +66,15 @@ class _TasksScreenState extends State<TasksScreen> {
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  Text(
-                    '${tasks.length} Tasks',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                    ),
-                  ),
+                  Consumer<TaskData>(builder: (context, taskDataModel, child) {
+                    return Text(
+                      '${taskDataModel.count()} Tasks',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    );
+                  }),
                 ],
               ),
             ),
@@ -100,9 +88,7 @@ class _TasksScreenState extends State<TasksScreen> {
                     topRight: Radius.circular(20),
                   ),
                 ),
-                child: TasksList(
-                  tasks: tasks,
-                ),
+                child: TasksList(),
               ),
             ),
           ],
